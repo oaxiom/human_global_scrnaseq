@@ -27,7 +27,7 @@ compute_sum_factors(adata, clusters='quick_clusters',
                             min_mean=0.1,
                             plotting=True,
                             lower_bound=0.4,
-                            normalize_counts=False,
+                            normalize_counts=True,
                             save_plots_dir='./scranpy/')
 
 # Size factors are in adata.obs['size_factors']

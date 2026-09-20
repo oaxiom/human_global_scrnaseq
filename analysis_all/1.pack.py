@@ -141,7 +141,7 @@ print('Loaded Samples...')
 
 print('Concatenating')
 adata = anndata.concat(samples)
-
+adata.obs_names_make_unique()
 del samples
 
 adata.X = adata.X.astype('float32', copy=False)
