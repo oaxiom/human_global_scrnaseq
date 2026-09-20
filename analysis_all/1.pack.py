@@ -26,18 +26,15 @@ ensg_to_symbol = {row['ensg']: row['name'] for row in ensg}
 
 samples = []
 
-dummy_run = False
+dummy_run = True
 
-for f in sorted(list(glob.glob('../tecounts/*/ss.Hs_*.gz'))):
+for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
     if 'spliced' in f: continue
     if 'barcode' in f: continue
 
-    bf = os.path.split(f)[1].replace('.tsv.gz', '')
-    t = bf.split('.')[1].split('_')
-    rep = bf.split('.')[2].replace('rp', '')
-    rep_name = '_'.join(t).replace('Hs_', '')
+    bf = os.path.split(f)[1].replace(' ', '_')
 
-    cell_type = 'XXXXXXXXXXXXXXXXXX'
+
     tissue =    'XXXXXXXXXXXXXXXXXX'
     organ =     'XXXXXXXXXXXXXXXXXX'
 
@@ -101,7 +98,7 @@ for f in sorted(list(glob.glob('../tecounts/*/ss.Hs_*.gz'))):
     # TODO: Testes
 
     obs_add={
-        'replicate': f'{rep_name}#{rep}',
+        'replicate': bf,
         'sample_type': sample_type,
         'organ': organ,
         'tissue': tissue,

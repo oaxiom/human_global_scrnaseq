@@ -36,7 +36,7 @@ if __name__ == '__main__': # This solves a crazy weird bug in the joblib!
         # decreasing theta and increasing lambda, to achieve a less integrated embedding
         theta=1, # default value is 1.0 ?! Although the docs say it is 2.0 in the R version.
         lamb=1, # default is 1.0
-        max_iter_harmony=30,
+        max_iter_harmony=50,
         )
 
     sc.pp.neighbors(adata)
