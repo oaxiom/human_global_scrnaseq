@@ -39,19 +39,3 @@ sc.pl.scatter(adata, 'size_factors', 'n_genes', show=False, save='size_factors_v
 adata.raw = adata
 
 adata.write('./normed.scranpy.h5ad')
-
-"""
-library('data.table')
-library('scran')
-library(rstudioapi)
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-#Sys.setenv('R_MAX_VSIZE'=54000000000) Renviron = 130 Gb
-
-data_mat = data.matrix(fread('dense_array.tsv.gz', sep='\t'))
-clusters <- quickCluster(data_mat)
-size_factors = calculateSumFactors(data_mat, clusters=clusters, min.mean=0.1)
-fwrite(data.frame(size_factors), file='size_factors.csv')
-
-length(size_factors)
-"""

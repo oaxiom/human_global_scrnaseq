@@ -48,7 +48,7 @@ if __name__ == '__main__': # This solves a crazy weird bug in the joblib!
     '''
 
     sc.tl.tsne(adata)
-    sc.tl.umap(adata, min_dist=0.3)
+    sc.tl.umap(adata, min_dist=0.6)
 
     # Perform clustering - using highly variable genes
     res = [2.0, 0.8, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05]

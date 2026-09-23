@@ -26,7 +26,7 @@ ensg_to_symbol = {row['ensg']: row['name'] for row in ensg}
 
 samples = []
 
-dummy_run = True
+dummy_run = False
 
 for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
     if 'spliced' in f: continue
@@ -93,9 +93,21 @@ for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
         disease_state = 'Normal'
         disease_label = "NA"
 
-    # TODO: PBMC
+    elif tissue == 'adult_testes':
+        organ = 'Testes'
+        sample_type = 'Testes'
+        tissue = 'Testes'
+        disease_state = 'Normal'
+        disease_label = "NA"
+
+    elif tissue == 'adult_pbmc':
+        organ = 'Blood'
+        sample_type = 'PBMC'
+        tissue = 'PBMC'
+        disease_state = 'Normal'
+        disease_label = "NA"
+
     # TODO: Azheimers
-    # TODO: Testes
 
     obs_add={
         'replicate': bf,
@@ -137,11 +149,19 @@ if dummy_run:
 print('Loaded Samples...')
 
 print('Concatenating')
+# TODO: Could be done on-disk...
 adata = anndata.concat(samples)
-adata.obs_names_make_unique()
 del samples
 
+adata.obs_names_make_unique()
+
 adata.X = adata.X.astype('float32', copy=False)
+
+# Base filtering for QC failures:
+sc.pp.filter_cells(adata, min_genes=1000)
+sc.pp.filter_cells(adata, max_genes=8000)
+sc.pp.filter_cells(adata, min_counts=5000)
+sc.pp.filter_cells(adata, max_counts=50000)
 
 print(adata)
 
@@ -150,7 +170,6 @@ print('Total number of genes: {:d}'.format(adata.n_vars))
 
 adata.write('./raw_data.h5ad')
 
-oh = open('gene_names.all.tsv', 'w')
-for g in adata.var_names:
-    oh.write('%s\n' % g)
-oh.close()
+with open('gene_names.all.tsv', 'w') as oh:
+    for g in adata.var_names:
+        oh.write('%s\n' % g)
