@@ -48,12 +48,13 @@ if __name__ == '__main__': # This solves a crazy weird bug in the joblib!
     '''
 
     sc.tl.tsne(adata)
-    sc.tl.umap(adata, min_dist=0.6)
+    sc.tl.umap(adata, min_dist=0.2)
 
     # Perform clustering - using highly variable genes
-    res = [2.0, 0.8, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05]
+    res = [2.0, 1.5, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
     for r in res:
-        sc.tl.leiden(adata, resolution=r, key_added='leiden_r{0:.2f}'.format(r),
+        sc.tl.leiden(adata, resolution=r,
+                     key_added=f'leiden_r{r:.2f}',
                      flavor='igraph', n_iterations=2)
 
     #adata.write('./scvelo/learned-scvelo.h5ad')

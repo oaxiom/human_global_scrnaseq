@@ -4,10 +4,12 @@ Pack the scRNA-seq data using scanpy, prep for scran normalisation
 
 """
 
+import time
 import matplotlib
 import scanpy as sc
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import io, sparse
 
 plt.rcParams['figure.figsize'] = (8,8)
 sc.settings.verbosity = 3
@@ -48,6 +50,16 @@ print('Total number of cells: {:d}'.format(adata.n_obs))
 print('Total number of genes: {:d}'.format(adata.n_vars))
 
 adata.write('./filtered.h5ad')
+
+"""
+# 8. Export lightweight MatrixMarket sparse matrix (avoids dense array OOM)
+print("Exporting sparse Matrix Market matrix for scran...")
+s = time.time()
+mat_to_export = adata.X.T.tocsr() if sparse.issparse(adata.X) else sparse.csr_matrix(adata.X.T)
+io.mmwrite("matrix.mtx", mat_to_export)
+e = time.time()
+print(f"Sparse matrix exported in: {e - s:.1f} sec")
+"""
 
 with open('gene_names.filtered.tsv', 'w') as oh:
     for g in adata.var_names:

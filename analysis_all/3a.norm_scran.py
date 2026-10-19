@@ -1,4 +1,5 @@
 
+import time
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
@@ -11,6 +12,8 @@ plt.rcParams['figure.figsize']=(8,8) #rescale figures
 sc.settings.verbosity = 3
 sc.set_figure_params(dpi=200, dpi_save=300)
 sc.settings.autoshow = False
+
+s = time.time()
 
 adata = sc.read('./filtered.h5ad')
 
@@ -30,6 +33,8 @@ compute_sum_factors(adata, clusters='quick_clusters',
                             normalize_counts=True,
                             save_plots_dir='./scranpy/')
 
+e = time.time() # I omit the saving as this version does the / size_factors for you.
+
 # Size factors are in adata.obs['size_factors']
 
 sc.pl.scatter(adata, 'size_factors', 'n_counts', show=False, save='size_factors_vs_ncounts.pdf')
@@ -39,3 +44,6 @@ sc.pl.scatter(adata, 'size_factors', 'n_genes', show=False, save='size_factors_v
 adata.raw = adata
 
 adata.write('./normed.scranpy.h5ad')
+
+
+print(f'Took {e-s:.1f} seconds')

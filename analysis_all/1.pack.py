@@ -34,7 +34,6 @@ for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
 
     bf = os.path.split(f)[1].replace(' ', '_')
 
-
     tissue =    'XXXXXXXXXXXXXXXXXX'
     organ =     'XXXXXXXXXXXXXXXXXX'
 
@@ -85,6 +84,34 @@ for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
         else:
             disease_state = 'Diseased'
             disease_label = "Parkinson's disease"
+
+    elif tissue == 'adult_skin':
+        organ = 'Skin'
+        sample_type = 'Skin biopsy'
+        tissue = 'Skin'
+        if '.NS_' in f:
+            disease_state = 'Normal'
+            disease_label = "NA"
+        elif '.PNS_' in f: # Psoriasis, but proximal
+            disease_state = 'Normal'
+            disease_label = "NA"
+        elif '.PS_' in f:
+            disease_state = 'Diseased'
+            disease_label = "Psoriasis"
+
+    elif tissue == 'adult_pancreas':
+        organ = 'Pancreas'
+        sample_type = 'Pancreas sample'
+        tissue = 'Pancreas'
+        disease_state = 'Normal'
+        disease_label = "NA"
+
+    elif tissue == 'adult_pituitary':
+        organ = 'Pituitary'
+        sample_type = 'Pituitary sample'
+        tissue = 'Pituitary'
+        disease_state = 'Normal'
+        disease_label = "NA"
 
     elif tissue == 'adult_ovary':
         organ = 'Ovary'
