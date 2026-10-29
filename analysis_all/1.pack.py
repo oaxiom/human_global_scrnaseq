@@ -26,7 +26,26 @@ ensg_to_symbol = {row['ensg']: row['name'] for row in ensg}
 
 samples = []
 
-dummy_run = False
+def age_sex_ethnicity_parser(s: str):
+    age = s[0:2]
+    sex = 'NA'
+    ethnicity = 'NA'
+
+    if 'M' in s: sex = 'Male'
+    elif 'F' in s: sex = 'Female'
+
+    if s.endswith('AA'):
+        ethnicity = 'African American'
+    elif s.endswith('A'):
+        ethnicity = 'Asian'
+    elif s.endswith('L'):
+        ethnicity = 'Latino'
+    elif s.endswith('C'):
+        ethnicity = 'Caucasian'
+
+    return age, sex, ethnicity
+
+dummy_run = True
 
 for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
     if 'spliced' in f: continue
@@ -36,11 +55,11 @@ for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
 
     tissue =    'XXXXXXXXXXXXXXXXXX'
     organ =     'XXXXXXXXXXXXXXXXXX'
+    age = 'NA'
+    sex = 'NA'
+    # TODO: Add sc/snRNA-seq method
 
     tissue = f.split('/')[2]
-
-    # TODO: Add age stratification data
-    # TODO: Add sc/snRNA-seq method
 
     if tissue == 'adult_heart':
         organ = 'Heart'
@@ -62,6 +81,17 @@ for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
         tissue = 'Endometrium'
         disease_state = 'Normal'
         disease_label = "NA"
+        if 'YMA' in bf: # These samples were labelled 18-34Y
+            age = '30'
+        elif 'AMA' in bf: # Labelled >40Y
+            age = '45'
+        elif 'endometrium_old' in bf:
+            age = '45'
+        elif 'endometrium_young' in bf:
+            age = '35'
+        else:
+            age, sex, ethnicity = age_sex_ethnicity_parser(bf.split('_')[3])
+        sex = 'Female'
 
     elif tissue == 'adult_ileum':
         organ = 'Ileum'
@@ -112,6 +142,13 @@ for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
         tissue = 'Pituitary'
         disease_state = 'Normal'
         disease_label = "NA"
+        # See: https://pmc.ncbi.nlm.nih.gov/articles/PMC8957708/#SM1
+        if '_adult' in f:
+            if 'rp1' in f: age = '37'
+            elif 'rp2' in f: age = '41'
+        elif '_aged' in f:
+            if 'rp1' in f: age = '85'
+            elif 'rp2' in f: age = '90'
 
     elif tissue == 'adult_ovary':
         organ = 'Ovary'
@@ -126,6 +163,7 @@ for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
         tissue = 'Testes'
         disease_state = 'Normal'
         disease_label = "NA"
+        sex = 'Male'
 
     elif tissue == 'adult_pbmc':
         organ = 'Blood'
@@ -143,9 +181,13 @@ for f in sorted(list(glob.glob('../tecounts/*/*.gz'))):
         'tissue': tissue,
         'disease_state': disease_state,
         'disease_label': disease_label,
+        'age': age,
+        'sex': sex,
         }
 
-    print(obs_add)
+    if 'X' in obs_add.values():
+        print(obs_add)
+
     if not dummy_run:
         sam = sc_utils.sparsify(f,
             obs_add=obs_add,

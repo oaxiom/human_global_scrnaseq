@@ -20,6 +20,12 @@ adata = sc.read('learned-noscvelo.h5ad')
 
 spot_size = 3
 
+sc.pl.umap(adata, color='organ', groups=list(adata.obs['organ']), use_raw=False, size=spot_size,
+           legend_loc='right margin', show=False, save=f'markers.all.pdf')
+
+sc.pl.tsne(adata, color='organ', groups=list(adata.obs['organ']), use_raw=False, size=spot_size,
+           legend_loc='right margin', show=False, save=f'markers.all.pdf')
+
 for cell_type in set(adata.obs['organ']):
     print(cell_type)
 
